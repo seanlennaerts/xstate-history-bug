@@ -54,8 +54,15 @@ await waitFor(actor, snapshot => snapshot.hasTag('pause'))
 assert.equal(actor.getSnapshot().matches({ OrderSummary: 'NotReady' }), true)
 actor.send({ type: 'ready' })
 assert.equal(actor.getSnapshot().matches({ OrderSummary: 'Ready' }), true)
-//
 actor.send({ type: 'edit-shipping' })
-actor.send({ type: 'update-shipping-address' })
-await waitFor(actor, snapshot => snapshot.hasTag('pause'))
-assert.equal(actor.getSnapshot().matches({ OrderSummary: 'Ready' }), true)
+// we should now have historyValue
+// console.log(actor.getSnapshot().historyValue['(machine).OrderSummary.History'])
+
+// simulate persist
+const snapshot = actor.getPersistedSnapshot()
+// restore persisted snapshot
+const secondActor = createActor(machine, { snapshot }).start();
+
+secondActor.send({ type: 'update-shipping-address' })
+await waitFor(secondActor, snapshot => snapshot.hasTag('pause'))
+assert.equal(secondActor.getSnapshot().matches({ OrderSummary: 'Ready' }), true)
