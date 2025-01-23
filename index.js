@@ -10,9 +10,10 @@ const machine = setup({
   initial: 'ShippingAddress',
   states: {
     ShippingAddress: {
+      tags: ['pause'],
       on: {
         'update-shipping-address': 'UpdatingShippingAddress'
-      }
+      },
     },
     UpdatingShippingAddress: {
       invoke: {
@@ -22,6 +23,7 @@ const machine = setup({
       }
     },
     OrderSummary: {
+      tags: ['pause'],
       initial: "NotReady",
       on: {
         'edit-shipping': 'ShippingAddress'
@@ -48,12 +50,12 @@ const machine = setup({
 
 const actor = createActor(machine).start();
 actor.send({ type: 'update-shipping-address' })
-await waitFor(actor, snapshot => snapshot.matches('OrderSummary'))
+await waitFor(actor, snapshot => snapshot.hasTag('pause'))
 assert.equal(actor.getSnapshot().matches({ OrderSummary: 'NotReady' }), true)
 actor.send({ type: 'ready' })
 assert.equal(actor.getSnapshot().matches({ OrderSummary: 'Ready' }), true)
 //
 actor.send({ type: 'edit-shipping' })
 actor.send({ type: 'update-shipping-address' })
-await waitFor(actor, snapshot => snapshot.matches('OrderSummary'))
+await waitFor(actor, snapshot => snapshot.hasTag('pause'))
 assert.equal(actor.getSnapshot().matches({ OrderSummary: 'Ready' }), true)
