@@ -60,8 +60,10 @@ actor.send({ type: 'edit-shipping' })
 
 // simulate persist
 const snapshot = actor.getPersistedSnapshot()
+const serialized = JSON.stringify(snapshot)
 // restore persisted snapshot
-const secondActor = createActor(machine, { snapshot }).start();
+const parsed = JSON.parse(serialized)
+const secondActor = createActor(machine, { snapshot: parsed }).start();
 
 secondActor.send({ type: 'update-shipping-address' })
 await waitFor(secondActor, snapshot => snapshot.hasTag('pause'))
