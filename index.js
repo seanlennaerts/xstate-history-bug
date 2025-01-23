@@ -71,11 +71,12 @@ actor.send({ type: 'edit-shipping' })
 // simulate persist
 const snapshot = actor.getPersistedSnapshot()
 const serialized = JSON.stringify(snapshot)
-// console.log(serialized)
+
 // restore persisted snapshot
 const parsed = JSON.parse(serialized)
 console.log('creating actor from snapshot')
 const secondActor = createActor(machine, { snapshot: parsed }).start();
+const secondSnapshot = secondActor.getSnapshot()
 console.log('created actor from snapshot')
 
 secondActor.send({ type: 'update-shipping-address' })
