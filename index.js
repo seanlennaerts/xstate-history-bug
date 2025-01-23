@@ -47,13 +47,13 @@ const machine = setup({
 })
 
 const actor = createActor(machine).start();
-actor.send({type: 'update-shipping-address'})
+actor.send({ type: 'update-shipping-address' })
 await waitFor(actor, snapshot => snapshot.matches('OrderSummary'))
-assert.equal(actor.getSnapshot().matches({OrderSummary: 'NotReady'}), true)
-actor.send({type: 'ready'})
-assert.equal(actor.getSnapshot().matches({OrderSummary: 'Ready'}), true)
+assert.equal(actor.getSnapshot().matches({ OrderSummary: 'NotReady' }), true)
+actor.send({ type: 'ready' })
+assert.equal(actor.getSnapshot().matches({ OrderSummary: 'Ready' }), true)
 //
-actor.send({type: 'edit-shipping'})
-actor.send({type: 'update-shipping-address'})
+actor.send({ type: 'edit-shipping' })
+actor.send({ type: 'update-shipping-address' })
 await waitFor(actor, snapshot => snapshot.matches('OrderSummary'))
-assert.equal(actor.getSnapshot().matches({OrderSummary: 'Ready'}), true)
+assert.equal(actor.getSnapshot().matches({ OrderSummary: 'Ready' }), true)
