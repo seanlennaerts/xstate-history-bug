@@ -66,19 +66,20 @@ actor.send({ type: 'ready' })
 assert.deepEqual(actor.getSnapshot().value, { OrderSummary: 'Ready' })
 actor.send({ type: 'edit-shipping' })
 // we should now have historyValue
-// console.log(actor.getSnapshot().historyValue['(machine).OrderSummary.History'])
 
 // simulate persist
 const snapshot = actor.getPersistedSnapshot()
 const serialized = JSON.stringify(snapshot)
-
+// console.log(serialized)
 // restore persisted snapshot
 const parsed = JSON.parse(serialized)
 console.log('creating actor from snapshot')
 const secondActor = createActor(machine, { snapshot: parsed }).start();
 const secondSnapshot = secondActor.getSnapshot()
 console.log('created actor from snapshot')
+console.log("\nSnapshot from new actor:\n", secondActor.getPersistedSnapshot(), '\n');
 
+assert.deepEqual(secondActor.getSnapshot().value, 'ShippingAddress')
 secondActor.send({ type: 'update-shipping-address' })
 await waitFor(secondActor, snapshot => snapshot.hasTag('pause'), { waitFor: 3000 })
 assert.deepEqual(secondActor.getSnapshot().value, { OrderSummary: 'Ready' })
