@@ -70,12 +70,12 @@ actor.send({ type: 'edit-shipping' })
 // simulate persist
 const snapshot = actor.getPersistedSnapshot()
 const serialized = JSON.stringify(snapshot)
-// console.log(serialized)
+console.log("\nSnapshot from original actor:\n", snapshot, '\n')
+
 // restore persisted snapshot
 const parsed = JSON.parse(serialized)
 console.log('creating actor from snapshot')
 const secondActor = createActor(machine, { snapshot: parsed }).start();
-const secondSnapshot = secondActor.getSnapshot()
 console.log('created actor from snapshot')
 console.log("\nSnapshot from new actor:\n", secondActor.getPersistedSnapshot(), '\n');
 
